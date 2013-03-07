@@ -12,6 +12,7 @@
 # See the License for more information.
 #-----------------------------------------------------------------------
 
+include_directories(${POCO_INCLUDE_DIRS})
 add_executable(micro_pipeline micro_pipeline.cpp)
-
+target_link_libraries(micro_pipeline ${POCO_LIBRARIES})
 

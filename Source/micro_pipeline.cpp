@@ -10,11 +10,14 @@
 // implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the License for more information.
 
-
+// Standard Library
 #include <cstdlib>
+#include <iostream>
 
-int main(int argc, const char *argv[]) {
-  
-  return EXIT_SUCCESS;
-}
+// Third Party
+// - POCO
+#include "MicroPipelineApplication.hpp"
 
+// This Project
+
+POCO_APP_MAIN(MicroPipeline::MicroPipelineApplication)
