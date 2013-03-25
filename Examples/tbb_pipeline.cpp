@@ -4,6 +4,7 @@
 // Copyright (c) 2013 by The University of Warwick
 
 #include <iostream>
+#include <cstdlib>
 
 #include "tbb/tbb_stddef.h"
 #include "tbb/pipeline.h"
@@ -28,7 +29,7 @@ struct IntGenerator {
   int operator()(tbb::flow_control& fc) const {
     if (gen_ <= number_) {
       gen_++;
-      std::cout << gen_ << std::endl;
+      std::cout << "Generating: " << gen_ << std::endl;
       return gen_;
     } else {
       fc.stop();
@@ -41,18 +42,25 @@ struct IntGenerator {
 // - Simple pipeline operation
 struct IntMultiplier {
   int factor_;
+  std::string name_; 
 
-  IntMultiplier(int n) : factor_(n) {}
+  IntMultiplier(int n, std::string name) : factor_(n), name_(name) {}
 
   int operator()(int v) const {
-    return v*factor_;
+    std::cout << v << " : [" << name_ << "] processing : " << std::endl;
+    //sleep(v);
+    int sl = factor_;
+    std::cout << v << " : [" << name_ << "] sleep : " << sl << std::endl;
+    sleep(sl);
+    std::cout << v << " : [" << name_ << "] done : " << v << std::endl;
+    return v;
   }
 };
 
 // - Should print out ints in order
 struct ResultReporter {
-  void operator()(int& n) const {
-    std::cout << "received " << n << " " << &n << std::endl;
+  void operator()(int n) const {
+    std::cerr << "received " << n << " " << &n << std::endl;
   }
 };
 
@@ -68,8 +76,12 @@ int main(int argc, char **argv) {
                              iput
                              ) &
                          tbb::make_filter<int,int>(
-                             tbb::filter::parallel,
-                             IntMultiplier(2)
+                             tbb::filter::serial,
+                             IntMultiplier(2, "first")
+                             ) &
+                         tbb::make_filter<int,int>(
+                             tbb::filter::serial,
+                             IntMultiplier(10, "second")
                              ) &
                          tbb::make_filter<int,void>(
                              tbb::filter::serial,
