@@ -38,18 +38,16 @@ class MicroPipelineApplication : public Poco::Util::Application {
   virtual void initialize(Application& self) {
     this->loadConfiguration();
     Application::initialize(self);
-    //this->logger().information("running initialize");
+    this->logger().information("running initialize");
   }
   
   virtual void uninitialize() {
-    ///Poco::Logger& appLogger = this->logger();
-    //appLogger.information("running uninitialize");
+    this->logger().information("running uninitialize");
     Application::uninitialize();
   }  
   
   virtual void reinitialize(Application& self) {
-    //Poco::Logger& appLogger = this->logger();
-    //appLogger.information("running reinitialize");
+    this->logger().information("running reinitialize");
     Application::reinitialize(self);
   }
 
@@ -64,16 +62,16 @@ class MicroPipelineApplication : public Poco::Util::Application {
   virtual void handleOption(const std::string& name,
                             const std::string& value) {
     Application::handleOption(name, value);
-    //this->logger().information("running handle option");
+    this->logger().information("running handle option");
   }
 
   virtual int main(const std::vector<std::string>& args) {
     Poco::Logger& appLogger = this->logger();
     appLogger.information("running main");
-    //appLogger.information("name() : " + std::string(this->name()));
-    //appLogger.information("commandName() : " + this->commandName());
+    appLogger.information("name() : " + std::string(this->name()));
+    appLogger.information("commandName() : " + this->commandName());
     
-    //appLogger.information("config : " + this->config().getString("application.configDir"));
+    appLogger.information("config : " + this->config().getString("application.configDir"));
     return EXIT_OK;
   }
 };
