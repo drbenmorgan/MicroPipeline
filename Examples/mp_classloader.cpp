@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 
   // Create classes, stick them in a vector and process 10 integers
   MicroPipeline::Pipeline MP;
-  MP.push_back(MicroPipeline::Pipeline::value_type(loader.create("MyModuleFoo")));
+  MP.push_back(MicroPipeline::Pipeline::value_type(loader.create("MyProcessingModule::MyModuleFoo")));
   MP.push_back(MicroPipeline::Pipeline::value_type(loader.create("MyModuleBar")));
   
   MicroPipeline::DataStream dataStream(100);

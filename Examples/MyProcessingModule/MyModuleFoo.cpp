@@ -8,6 +8,7 @@
 // - A
 
 // This Project
+namespace MyProcessingModule {
 
 MyModuleFoo::MyModuleFoo() {
   std::cout << "[MyModuleFoo] Constructor" << std::endl;
@@ -26,3 +27,4 @@ int MyModuleFoo::process(int data) const {
   return data*2;
 }
 
+} // namespace MyProcessingModule

@@ -11,7 +11,7 @@
 #include "MicroPipeline/IProcessingModule.hpp"
 
 // This Project
-
+namespace MyProcessingModule {
 class MyModuleFoo : public IProcessingModule {
  public:
   MyModuleFoo();
@@ -20,7 +20,7 @@ class MyModuleFoo : public IProcessingModule {
   std::string name() const;
   int process(int data) const;
 };
-
+} // namespace MyProcessingModule
 #endif // MYMODULEFOO_HH
 
 
