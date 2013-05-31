@@ -15,8 +15,10 @@
 // Standard Library
 
 // Third Party
-// - A
+// - Poco
+#include "Poco/Version.h"
 #include "Poco/Util/Application.h"
+#include "Poco/Util/AbstractConfiguration.h"
 
 // This Project
 
@@ -38,6 +40,7 @@ class MicroPipelineApplication : public Poco::Util::Application {
   virtual void initialize(Application& self) {
     this->loadConfiguration();
     Application::initialize(self);
+    this->config().setInt("application.pocoVersion", POCO_VERSION);
     this->logger().information("running initialize");
   }
   
@@ -52,6 +55,7 @@ class MicroPipelineApplication : public Poco::Util::Application {
   }
 
   virtual void defineOptions(Poco::Util::OptionSet& options) {
+    this->logger().information("running defineOptions");
     Application::defineOptions(options);
     options.addOption(
         Poco::Util::Option("help", "h", "display help")
@@ -68,11 +72,33 @@ class MicroPipelineApplication : public Poco::Util::Application {
   virtual int main(const std::vector<std::string>& args) {
     Poco::Logger& appLogger = this->logger();
     appLogger.information("running main");
-    appLogger.information("name() : " + std::string(this->name()));
-    appLogger.information("commandName() : " + this->commandName());
-    
-    appLogger.information("config : " + this->config().getString("application.configDir"));
+    this->printProperties("");
     return EXIT_OK;
+  }
+
+  //----------------------------------------------------------------------
+  // Other methods
+  void printProperties(const std::string& base) {
+    Poco::Util::AbstractConfiguration::Keys keys;
+    this->config().keys(base, keys);
+    if (keys.empty()) {
+      if (config().hasProperty(base)) {
+        std::string msg;
+        msg.append(base);
+        msg.append(" = ");
+        msg.append(config().getString(base));
+        logger().information(msg);
+      }
+    }
+    else {
+      for (Poco::Util::AbstractConfiguration::Keys::const_iterator it = keys.begin(); 
+           it != keys.end(); ++it) {
+        std::string fullKey = base;
+        if (!fullKey.empty()) fullKey += '.';
+        fullKey.append(*it);
+        printProperties(fullKey);
+      }
+    }
   }
 };
 } // namespace MicroPipeline
