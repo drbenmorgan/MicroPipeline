@@ -12,7 +12,7 @@
 
 // This Project
 namespace MyProcessingModule {
-class MyModuleFoo : public IProcessingModule {
+class MyModuleFoo : public MicroPipeline::IProcessingModule {
  public:
   MyModuleFoo();
   virtual ~MyModuleFoo();

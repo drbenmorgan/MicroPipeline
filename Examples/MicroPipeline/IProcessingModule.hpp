@@ -11,7 +11,7 @@
 // - A
 
 // This Project
-
+namespace MicroPipeline {
 class IProcessingModule {
  public:
   IProcessingModule() {}
@@ -20,7 +20,6 @@ class IProcessingModule {
   virtual std::string name() const =0;
   virtual int process(int data) const =0;
 };
-
+} // namespace MicroPipeline
 #endif // IPROCESSINGMODULE_HH
-
 

@@ -12,7 +12,7 @@
 
 // This Project
 
-class MyModuleBar : public IProcessingModule {
+class MyModuleBar : public MicroPipeline::IProcessingModule {
  public:
   MyModuleBar();
   virtual ~MyModuleBar();

@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------
 // Manifests
 //
-POCO_BEGIN_MANIFEST(IProcessingModule)
+POCO_BEGIN_MANIFEST(MicroPipeline::IProcessingModule)
   POCO_EXPORT_CLASS(MyProcessingModule::MyModuleFoo)
   POCO_EXPORT_CLASS(MyModuleBar)
 POCO_END_MANIFEST
