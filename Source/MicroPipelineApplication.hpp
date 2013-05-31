@@ -39,8 +39,20 @@ class MicroPipelineApplication : public Poco::Util::Application {
   //
   virtual void initialize(Application& self) {
     this->loadConfiguration();
-    Application::initialize(self);
+    // Hard code configuration properties - can later be moved
+    // to proper config file...
     this->config().setInt("application.pocoVersion", POCO_VERSION);
+    this->config().setString("logging.channels.mpconsole.class", "ConsoleChannel");
+    this->config().setString("logging.channels.mpconsole.pattern", "[%q:%s] %t");
+    this->config().setString("logging.loggers.mpdefault.channel", "mpconsole");
+    this->config().setString("logging.loggers.mpdefault.name", "micro_pipeline");
+    this->config().setString("application.logger", "${application.name}");
+    
+    this->config().setString("logging.loggers.root.channel.class" , "ConsoleChannel");
+    this->config().setString("logging.loggers.root.channel.pattern" , "%p %t");
+
+
+    Application::initialize(self);
     this->logger().information("running initialize");
   }
   
