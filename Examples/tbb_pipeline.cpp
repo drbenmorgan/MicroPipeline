@@ -41,21 +41,27 @@ struct IntGenerator {
 
 // - Simple pipeline operation
 struct IntMultiplier {
+  static int instances;
   int factor_;
   std::string name_; 
 
-  IntMultiplier(int n, std::string name) : factor_(n), name_(name) {}
+  IntMultiplier(int n, std::string name) : factor_(n), name_(name) {
+    ++instances;
+  }
 
   int operator()(int v) const {
-    std::cout << v << " : [" << name_ << "] processing : " << std::endl;
+    std::cout << v << " : [" << name_ << ":" << this << "] processing : " << std::endl;
     //sleep(v);
     int sl = factor_;
-    std::cout << v << " : [" << name_ << "] sleep : " << sl << std::endl;
+    std::cout << v << " : [" << name_ << ":" << this << "] sleep : " << sl << std::endl;
     sleep(sl);
-    std::cout << v << " : [" << name_ << "] done : " << v << std::endl;
+    std::cout << v << " : [" << name_ << ":" << this << "] done : " << v << std::endl;
+    std::cout << v << " : [instances : " << instances << "]" << std::endl;
     return v;
   }
 };
+
+int IntMultiplier::instances = 0;
 
 // - Should print out ints in order
 struct ResultReporter {
@@ -76,13 +82,13 @@ int main(int argc, char **argv) {
                              iput
                              ) &
                          tbb::make_filter<int,int>(
-                             tbb::filter::serial,
+                             tbb::filter::parallel,
                              IntMultiplier(2, "first")
                              ) &
-                         tbb::make_filter<int,int>(
-                             tbb::filter::serial,
-                             IntMultiplier(10, "second")
-                             ) &
+                         //tbb::make_filter<int,int>(
+                         //    tbb::filter::serial,
+                          //   IntMultiplier(10, "second")
+                          //   ) &
                          tbb::make_filter<int,void>(
                              tbb::filter::serial,
                              ResultReporter()
