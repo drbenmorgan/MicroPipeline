@@ -33,7 +33,7 @@ struct IntGenerator {
       return gen_;
     } else {
       fc.stop();
-      return NULL;
+      return 0;
     }
   }
 };
