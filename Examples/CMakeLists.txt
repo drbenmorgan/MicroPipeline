@@ -6,6 +6,7 @@
 add_subdirectory(mp_asyncchannel)
 add_subdirectory(mp_sharedlib)
 add_subdirectory(mp_classloader)
+add_subdirectory(mp_subsystem)
 
 #-----------------------------------------------------------------------
 # TBB
