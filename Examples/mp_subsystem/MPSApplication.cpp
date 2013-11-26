@@ -1,6 +1,6 @@
 // MPSApplication - implementation
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 
 // Ourselves
@@ -37,6 +37,7 @@ const char* MPSApplication::name() const {
 
 void MPSApplication::initialize(Application& self) {
   // No default configuration
+  this->logger().information("running initialize");
   // - root logger
   this->config().setString("logging.loggers.MPSDEFAULT.name", "DEFAULT");
   this->config().setString("logging.loggers.MPSDEFAULT.channel", "MPSCONSOLE");
@@ -45,12 +46,12 @@ void MPSApplication::initialize(Application& self) {
   // - root channel
   this->config().setString("logging.channels.MPSCONSOLE.class", "ConsoleChannel");
   this->config().setString("logging.channels.MPSCONSOLE.pattern", "[%q:%s] %t");
-  
+
   this->config().setString("application.logger", "DEFAULT");
-      
+
   Application::initialize(self);
 
-  this->logger().information("running initialize");
+  this->logger().information("initialize done");
 }
 
 void MPSApplication::reinitialize(Application& self) {
@@ -66,11 +67,18 @@ void MPSApplication::defineOptions(Poco::Util::OptionSet& options) {
   this->logger().information("running defineOptions");
 
   Application::defineOptions(options);
+
+  options.addOption(
+      Poco::Util::Option("help", "h", "display help information")
+      .required(false)
+      .repeatable(false)
+      .callback(Poco::Util::OptionCallback<MPSApplication>(this, &MPSApplication::handleHelp)));
+  this->logger().information("defineOptions done");
 }
 
 void MPSApplication::handleOption(const std::string& name,
                                   const std::string& value) {
-  this->logger().information("running handle option");
+  this->logger().information("running handle option "+name+" "+value);
   Application::handleOption(name, value);
 }
 
@@ -84,4 +92,11 @@ int MPSApplication::main(const std::vector<std::string>& args) {
   mainLog << "uptime " << Poco::DateTimeFormatter::format(this->uptime()) << "\n";
   return EXIT_OK;
 }
+
+
+void MPSApplication::handleHelp(const std::string& name,
+                                const std::string& value) {
+  this->logger().information("handling help");
+}
+
 

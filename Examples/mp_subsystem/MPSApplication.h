@@ -1,6 +1,6 @@
 // MPSApplication - basic poco app for studying subsystem behaviour
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 #ifndef MPSAPPLICATION_HH
 #define MPSAPPLICATION_HH
@@ -21,7 +21,7 @@ class MPSApplication : public Poco::Util::Application {
 
  protected:
   virtual ~MPSApplication();
-  
+
   virtual void initialize(Application& self);
 
   virtual void reinitialize(Application& self);
@@ -33,6 +33,9 @@ class MPSApplication : public Poco::Util::Application {
   virtual void handleOption(const std::string& name, const std::string& value);
 
   virtual int main(const std::vector<std::string>& args);
+
+ private:
+  void handleHelp(const std::string& name, const std::string& value);
 };
 
 #endif // MPSAPPLICATION_HH
