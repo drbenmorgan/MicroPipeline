@@ -7,14 +7,30 @@
 #include "MPSApplication.h"
 
 // Standard Library
+#include <iostream>
 
 // Third Party
 // - Poco
 #include "Poco/LogStream.h"
 #include "Poco/DateTimeFormat.h"
 #include "Poco/DateTimeFormatter.h"
+#include "Poco/Util/HelpFormatter.h"
 
 // This Project
+
+// Dumb callback?
+struct Verbosity {
+  Verbosity() : level(0) {}
+  ~Verbosity() {}
+  void increment(const std::string&, const std::string&) {
+    ++level;
+    std::cout << "level : " << level << std::endl;
+  }
+
+  unsigned int level;
+};
+
+Verbosity gVerb;
 
 
 MPSApplication::MPSApplication() : Poco::Util::Application()
@@ -73,6 +89,13 @@ void MPSApplication::defineOptions(Poco::Util::OptionSet& options) {
       .required(false)
       .repeatable(false)
       .callback(Poco::Util::OptionCallback<MPSApplication>(this, &MPSApplication::handleHelp)));
+
+  // Increment verbosity?
+  options.addOption(
+      Poco::Util::Option("verbose", "v", "increase verbosity")
+      .required(false)
+      .repeatable(true)
+      .callback(Poco::Util::OptionCallback<Verbosity>(&gVerb, &Verbosity::increment)));
   this->logger().information("defineOptions done");
 }
 
@@ -97,6 +120,21 @@ int MPSApplication::main(const std::vector<std::string>& args) {
 void MPSApplication::handleHelp(const std::string& name,
                                 const std::string& value) {
   this->logger().information("handling help");
+  this->displayHelp();
+  this->stopOptionsProcessing();
 }
 
+void MPSApplication::displayHelp() {
+  Poco::Util::HelpFormatter helpFormatter(options());
+  helpFormatter.setCommand(commandName());
+  helpFormatter.setUsage("OPTIONS");
+  helpFormatter.setHeader(
+      std::string(this->name()) +
+      "\n\n"
+      "A sample application that demonstrates some of the features "
+      "of the Poco::Util::Application class."
+      );
+  helpFormatter.setFooter("For more details see X");
+  helpFormatter.format(std::cout);
+}
 
