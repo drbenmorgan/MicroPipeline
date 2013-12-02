@@ -28,8 +28,19 @@ endif()
 # - Header path
 find_path(Poco_INCLUDE_DIR Poco/Poco.h DOC "Path to Poco headers" ${Poco_HEADER_SEARCH})
 
+# Get Version
+if(Poco_INCLUDE_DIR)
+  # Parse Poco's hex based version number
+  file(STRINGS ${Poco_INCLUDE_DIR}/Poco/Version.h Poco_PP_VERSION REGEX "^#define POCO_VERSION 0x.*$")
+  string(REGEX REPLACE ".*0x([0-9][0-9])([0-9][0-9])([0-9][0-9]).*" "\\1;\\2;\\3" Poco_VERSION_TUPLE ${Poco_PP_VERSION})
+  string(REGEX REPLACE "^0|;0" ";" Poco_VERSION_TUPLE "${Poco_VERSION_TUPLE}")
+  list(REMOVE_ITEM Poco_VERSION_TUPLE "")
 
-# - Libraries in turn (only Foundation/Util for now, and don't
+  # Convert to CMake-compatible version
+  string(REPLACE ";" "." Poco_VERSION "${Poco_VERSION_TUPLE}")
+endif()
+
+# - Libraries in turn (only Foundation/Util/XML/JSON for now, and don't
 # distinguish Release/Debug)
 find_library(Poco_FOUNDATION_LIBRARY
   NAMES PocoFoundation PocoFoundationd
@@ -42,6 +53,22 @@ find_library(Poco_UTIL_LIBRARY
   DOC "Path to Poco Utility library"
   ${Poco_LIBRARY_SEARCH}
   )
+
+find_library(Poco_XML_LIBRARY
+  NAMES PocoXML PocoXMLd
+  DOC "Path to Poco XML library"
+  ${Poco_LIBRARY_SEARCH}
+  )
+
+# - Json only on 1.5 and above
+if(Poco_VERSION VERSION_GREATER 1.4.99)
+  find_library(Poco_JSON_LIBRARY
+    NAMES PocoJSON PocoJSONd
+    DOC "Path to Poco JSON library"
+    ${Poco_LIBRARY_SEARCH}
+    )
+endif()
+
 
 # - Handle Standard Args
 include(FindPackageHandleStandardArgs)
