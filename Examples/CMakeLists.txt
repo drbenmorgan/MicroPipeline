@@ -14,3 +14,8 @@ add_subdirectory(mp_subsystem)
 add_subdirectory(tbb_pipeline)
 add_subdirectory(tbb_queues)
 
+#-----------------------------------------------------------------------
+# Miscellaneous
+#
+add_subdirectory(libmagic)
+
