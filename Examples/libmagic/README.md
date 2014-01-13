@@ -13,7 +13,8 @@ be used.
 
 1. File access protocol - i.e. `file://`, `http://`, `ftp://` etc
     - libmagic can only handle local files, so cURL might need to be
-      used to get MIME info for remote files.
+      used to get MIME info for remote files (though this relies on
+      the server being configured to report correct MIME type).
 2. MIME type - handled, apart from the caveat above, by libmagic.
     - Protocol and type may interact, e.g. some readers might handle remote
       access directly, others may need the file to be downloaded first.
