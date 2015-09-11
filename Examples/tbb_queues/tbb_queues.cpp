@@ -5,6 +5,7 @@
 //
 // Standard Library
 #include <iostream>
+#include <unistd.h>
 
 // Third Party
 // - TBB
@@ -74,7 +75,7 @@ int main(int argc, char *argv[]) {
   tbb::tbb_thread producer(p,1);
 
   MyConsumer c_a(inQueue,1);
-  MyConsumer c_b(inQueue,5);
+  MyConsumer c_b(inQueue,2);
 
   tbb::tbb_thread consumer_b(c_b);
   tbb::tbb_thread consumer_a(c_a);

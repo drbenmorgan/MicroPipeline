@@ -1,17 +1,18 @@
 // tbb_pipeline - very basic test of TBB's pipeline
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 
 #include <iostream>
 #include <cstdlib>
+#include <unistd.h>
 
 #include "tbb/tbb_stddef.h"
 #include "tbb/pipeline.h"
 
 
 void reportTBBVersion() {
-  std::cout << "Intel TBB " 
+  std::cout << "Intel TBB "
             << TBB_VERSION_MAJOR << "." << TBB_VERSION_MINOR
             << "(" << TBB_INTERFACE_VERSION << ")"
             << std::endl;
@@ -43,7 +44,7 @@ struct IntGenerator {
 struct IntMultiplier {
   static int instances;
   int factor_;
-  std::string name_; 
+  std::string name_;
 
   IntMultiplier(int n, std::string name) : factor_(n), name_(name) {
     ++instances;
@@ -72,8 +73,8 @@ struct ResultReporter {
 
 
 int main(int argc, char **argv) {
-  reportTBBVersion(); 
- 
+  reportTBBVersion();
+
   IntGenerator iput(10);
 
   tbb::parallel_pipeline(4,
@@ -94,6 +95,6 @@ int main(int argc, char **argv) {
                              ResultReporter()
                              )
                          );
-  
+
   return 0;
 }
