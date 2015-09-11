@@ -27,5 +27,7 @@ endif()
 
 check_include_file_cxx("condition_variable" HAS_CXX_CONDITION_H)
 
+# add the example executables
 add_executable(example_01 example_01.cpp)
+add_executable(example_02 example_02.cpp)
 
