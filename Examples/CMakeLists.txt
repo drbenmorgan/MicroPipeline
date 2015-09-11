@@ -18,4 +18,4 @@ add_subdirectory(tbb_queues)
 # Miscellaneous
 #
 add_subdirectory(libmagic)
-
+add_subdirectory(stdthread)
