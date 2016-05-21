@@ -9,6 +9,13 @@ project(MicroPipeline)
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 #-----------------------------------------------------------------------
+# C++14/14
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
+#-----------------------------------------------------------------------
 # Find required packages
 #
 find_package(Poco REQUIRED)

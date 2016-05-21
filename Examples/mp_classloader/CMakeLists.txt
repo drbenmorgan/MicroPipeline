@@ -13,4 +13,6 @@ add_library(MyProcessingModule MODULE
   MyProcessingModule/MyModuleBar.cpp
   MyProcessingModule/PocoManifest.cpp
   )
+target_link_libraries(MyProcessingModule ${Poco_FOUNDATION_LIBRARY})
+
 
