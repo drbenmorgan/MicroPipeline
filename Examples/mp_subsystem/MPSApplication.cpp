@@ -32,10 +32,37 @@ struct Verbosity {
 
 Verbosity gVerb;
 
+/// Try a simple additional subsystem
+class TestSubSystem : public Poco::Util::Subsystem {
+ public:
+  TestSubSystem() = default;
+
+  virtual const char* name() const  {
+    return "TestSubSystem";
+  }
+
+ protected:
+  virtual void initialize(Poco::Util::Application& app) {
+    logger_ = &(Poco::Logger::get(this->name()));
+    logger_->information("TestSubSystem::initialize");
+  }
+
+  virtual void uninitialize() {
+    logger_->information("TestSubSystem::uninitialize");
+  }
+
+ private:
+  Poco::Logger* logger_;
+};
+
+
+
+
 
 MPSApplication::MPSApplication() : Poco::Util::Application()
 {
   this->logger().information("default constructor running");
+  Application::instance().addSubsystem(new TestSubSystem);
 }
 
 MPSApplication::MPSApplication(int argc, char* argv[])
@@ -53,30 +80,72 @@ const char* MPSApplication::name() const {
 
 void MPSApplication::initialize(Application& self) {
   // No default configuration
-  this->logger().information("running initialize");
+  this->logger().information("start initialize");
+
+  // What is config at this point?
+  this->printConfig("");
+
   // - root logger
-  this->config().setString("logging.loggers.MPSDEFAULT.name", "DEFAULT");
-  this->config().setString("logging.loggers.MPSDEFAULT.channel", "MPSCONSOLE");
-  this->config().setString("logging.loggers.MPSDEFAULT.level", "trace");
+  //this->config().setString("logging.loggers.MPSDEFAULT.name", "DEFAULT");
+  //this->config().setString("logging.loggers.MPSDEFAULT.channel", "MPSCONSOLE");
+  //this->config().setString("logging.loggers.MPSDEFAULT.level", "trace");
 
   // - root channel
   this->config().setString("logging.channels.MPSCONSOLE.class", "ConsoleChannel");
   this->config().setString("logging.channels.MPSCONSOLE.pattern", "[%q:%s] %t");
+  this->config().setString("logging.loggers.root.channel", "MPSCONSOLE");
 
-  this->config().setString("application.logger", "DEFAULT");
+  // Using the config system, we can configure the properties of the logger
+  // for the given sub logger. Note the separation in naming between the
+  // configuration object (t1) and the ultimate logger (TestSubSystem).
+  // Need to think about how that feeds through to properties files...
+  // e.g.
+  // logging : properties {
+  //   channels : properties {
+  //     ChannelName : properties {
+  //       class : string = "ConsoleChannel"
+  //     }
+  //   loggers : properties {
+  //     # Would like to write
+  //     TestSubSystem : properties {
+  //       level : string = "trace"
+  //     }
+  //     # But have to write
+  //     t1 : properties {
+  //       name : string = "TestSubSystem"
+  //       level : string = "trace"
+  //     }
+  //   }
+  //
+  this->config().setString("logging.loggers.t1.name", "TestSubSystem");
+  this->config().setString("logging.loggers.t1.level", "fatal");
+  // Adding a custom channel requires both arguments!
+  //this->config().setString("logging.loggers.t1.channel.class", "ConsoleChannel");
+  //this->config().setString("logging.loggers.t1.channel.pattern", "fobar %t");
+
+  // Subsystems *must* be created before full initialization
+  // can do it here, or in app class constructor
+  // Need to see if we have configuration available from
+  // command line yet.
+  // Now try in constructor (could also envisage adding optional
+  // subsystems based on config...)
+  // this->addSubsystem(new TestSubSystem);
+
 
   Application::initialize(self);
 
-  this->logger().information("initialize done");
+  this->logger().information("end initialize");
+  this->printConfig("");
 }
 
 void MPSApplication::reinitialize(Application& self) {
+  this->logger().information("start reinitialize");
   Application::reinitialize(self);
-  this->logger().information("running reinitialize");
+  this->logger().information("end reinitialize");
 }
 
 void MPSApplication::uninitialize() {
-  this->logger().information("running uninitialize");
+  this->logger().information("start uninitialize");
 }
 
 void MPSApplication::defineOptions(Poco::Util::OptionSet& options) {
@@ -138,3 +207,30 @@ void MPSApplication::displayHelp() {
   helpFormatter.format(std::cout);
 }
 
+void MPSApplication::printConfig(const std::string& base) {
+  using Poco::Util::AbstractConfiguration;
+
+  AbstractConfiguration::Keys keys;
+    config().keys(base, keys);
+    if (keys.empty()) // key has no child
+    {
+        if (config().hasProperty(base))
+        {
+            std::string msg;
+            msg.append(base);
+            msg.append(" = ");
+            msg.append(config().getString(base));
+            poco_information(logger(),msg);
+        }
+    }
+    else // recursion
+    {
+        for (AbstractConfiguration::Keys::const_iterator it = keys.begin(); it != keys.end(); ++it)
+        {
+            std::string fullKey = base;
+            if (!fullKey.empty()) fullKey += '.';
+            fullKey.append(*it);
+            printConfig(fullKey);
+        }
+    }
+}

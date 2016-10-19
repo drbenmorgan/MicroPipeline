@@ -37,6 +37,8 @@ class MPSApplication : public Poco::Util::Application {
  private:
   void handleHelp(const std::string& name, const std::string& value);
   void displayHelp();
+
+  void printConfig(const std::string& base);
 };
 
 #endif // MPSAPPLICATION_HH
