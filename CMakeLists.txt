@@ -1,7 +1,7 @@
 # - Top level CMake script for MicroPipeline
 #
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-project(MicroPipeline)
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+project(MicroPipeline VERSION 0.1.0)
 
 #-----------------------------------------------------------------------
 # Core setup
@@ -14,11 +14,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 #-----------------------------------------------------------------------
 # Find required packages
 #
-find_package(Poco REQUIRED)
+# - Modern Poco supplies good -config scripts, so use these
+find_package(Poco REQUIRED Util NO_MODULE)
 find_package(TBB REQUIRED)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 #-----------------------------------------------------------------------
