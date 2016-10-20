@@ -8,6 +8,7 @@
 
 // Standard Library
 #include <iostream>
+#include <regex>
 
 // Third Party
 // - Poco
@@ -31,6 +32,56 @@ struct Verbosity {
 };
 
 Verbosity gVerb;
+
+/// Try a file lookup system
+class SearchPaths {
+ public:
+  SearchPaths() = default;
+
+  //! Append a new search path to the mount point prefix
+  bool addSearchPath(const std::string& prefix, const std::string& path) {
+    bool prefixIsValid = this->validatePrefix(prefix);
+    if (prefixIsValid) {
+      searchPaths_[prefix].push_back(path);
+    }
+    return prefixIsValid;
+  }
+
+  //! Resolve input path to fully resolved path
+  // Provides no guarantee that path actually exists.
+  //
+  std::string expand(const std::string& path) const {
+    // For back-compatibility, ignore any leading "@"
+    // Format expect to be "identifier:path"
+    return std::string {};
+  }
+
+  // Just for testing
+  void print(std::ostream& os) const {
+    os << "{";
+    for (auto const& elem : searchPaths_) {
+      os << elem.first << " : [";
+      for (auto const& p : elem.second) {
+        os << p << ",";
+      }
+    }
+    os << "]}\n";
+  }
+
+ private:
+  // Return true if prefix is a valid mount point
+  // basically, must be
+  // 1) two or more characters long (to not clash with drive letters)
+  // 2) be a valid C identifier
+  bool validatePrefix(const std::string& prefix) const {
+    static const std::regex CIdentifier("^[a-zA-Z][a-zA-Z0-9_]+");
+    return std::regex_match(prefix,CIdentifier);
+  }
+
+ private:
+  std::map<std::string, std::list<std::string> > searchPaths_;
+};
+
 
 /// Try a simple additional subsystem
 class TestSubSystem : public Poco::Util::Subsystem {
@@ -131,6 +182,19 @@ void MPSApplication::initialize(Application& self) {
   // subsystems based on config...)
   // this->addSubsystem(new TestSubSystem);
 
+  //Try SearchPaths...
+  SearchPaths s;
+  if(!s.addSearchPath("application", this->config().getString("application.configDir"))) {
+    this->logger().error("failed to add path");
+  }
+  if(!s.addSearchPath("local", this->config().getString("application.path"))) {
+    this->logger().error("failed to add path");
+  }
+  if(!s.addSearchPath("application", this->config().getString("application.path"))) {
+    this->logger().error("failed to add path");
+  }
+
+  s.print(std::cout);
 
   Application::initialize(self);
 
